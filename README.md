@@ -44,7 +44,7 @@ e.g
 
 ## TODO
 
-[x] - Initial build
-[] - Refactor API 
-[] - Add more pics
-[] -
+- [x] Initial build
+- [] Refactor API 
+- [] Add more pics
+- [] Add schematic of wiring w/ LEDs
