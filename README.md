@@ -1,6 +1,6 @@
 # iot-bme680-rest
 
-![An example version of the device](https://octodex.github.com/images/yaktocat.png)
+![An example version of the device](https://github.com/viktordanov/iot-bme680-rest/blob/master/nodemcuv1.jpg?raw=true)
 
 ## Note: This project is intended to run on a NodeMCUv1 (or a similar ESP8266 board) together with a Bosch BME680 sensor.
 
