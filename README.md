@@ -22,14 +22,14 @@ const char *password = "PASSWORD";
 ```
 
 ## API (WIP)
-# /info 
-### TODO: Should provide basic information about the device
+### /info 
+#### TODO: Should provide basic information about the device
 
-# /get
+### /get
 Provides data from the sensor
 
 e.g
-```json
+```jsonc
 {
   "tem": 26.94,     // Temperature
   "pre": 1004.22,   // Pressure
@@ -45,6 +45,6 @@ e.g
 ## TODO
 
 [x] - Initial build
-[ ] - Refactor API 
-[ ] - Add more pics
-[ ] -
+[] - Refactor API 
+[] - Add more pics
+[] -
