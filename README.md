@@ -20,3 +20,31 @@ const char *password = "PASSWORD";
 ...
 
 ```
+
+## API (WIP)
+# /info 
+### TODO: Should provide basic information about the device
+
+# /get
+Provides data from the sensor
+
+e.g
+```json
+{
+  "tem": 26.94,     // Temperature
+  "pre": 1004.22,   // Pressure
+  "hum": 57.107,    // Relative humidity
+  "gas": 160.731,   // Gas resistance
+  "alt": 75.45407,  // Approx. altitude
+  "aqi": 92.91285,  // Air quality index (/src/sensor.h for more info)
+  "hqp": 0.179129,  // Humidity quality part ↓
+  "gqp": 0.75       // Gas res. quality part (both used for the calculation of aqi)
+}
+```
+
+## TODO
+
+[x] - Initial build
+[ ] - Refactor API 
+[ ] - Add more pics
+[ ] -
