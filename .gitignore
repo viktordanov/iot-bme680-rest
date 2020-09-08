@@ -3,3 +3,8 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
+include/README
+lib/README
+src/main.cpp.back
+src/sensors.back
+test/README
