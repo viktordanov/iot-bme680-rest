@@ -12,6 +12,7 @@
 
 #include "leds.h"
 #include "sensor.h"
+#include "temperature.h"
 
 AsyncWebServer server(80);
 
@@ -45,9 +46,10 @@ void init_webserver()
   });
 
   // Send a GET request to <IP>/get?message=<message>
-  server.on("/info", HTTP_GET, [](AsyncWebServerRequest *request) {
-    String message = "info";
-    request->send(200, "text/plain", "Hello, GET: " + message);
+  server.on("/temp", HTTP_GET, [](AsyncWebServerRequest *request) {
+    String message;
+    serializeJson(get_temperature(), message);
+    request->send(200, "text/plain", message);
   });
 
   server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request) {
