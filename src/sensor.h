@@ -72,7 +72,7 @@ DynamicJsonDocument get_measurement()
   {
     String a = "Sensor not yet ready. Wait ";
     a += (DEBOUNCER * 0.5);
-    a += " s";
+    a += "s";
     doc["message"] = a;
     return doc;
   }
