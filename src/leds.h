@@ -13,6 +13,10 @@ bool SUCCESS_LED, WARNING_LED, ERROR_LED;
 bool success_set, warning_set, error_set;
 uint16 success_timer = 0, warning_timer = 0, error_timer = 0;
 
+void led_updater();
+
+Ticker led_ticker(led_updater, LED_UPDATE_RATE_MS, 0, MILLIS);
+
 // Called once every LED_UPDATE_RATE_MS (50ms)
 void led_updater()
 {
@@ -98,7 +102,6 @@ void led_updater()
   }
 }
 
-Ticker led_ticker(led_updater, LED_UPDATE_RATE_MS, 0, MILLIS);
 void init_leds()
 {
   pinMode(SUCCESS_LED_PIN, OUTPUT);
