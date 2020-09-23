@@ -8,3 +8,4 @@ lib/README
 src/main.cpp.back
 src/sensors.back
 test/README
+src/main.cpp.temp
