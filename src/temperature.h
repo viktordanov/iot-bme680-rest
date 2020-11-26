@@ -6,21 +6,24 @@
 #include <Ticker.h>
 #include "ArduinoJson.h"
 
+
+
 #define TEMP_SENSOR_PIN D3
 
 // Setup a oneWire instance to communicate with any OneWire devices
 OneWire oneWire(TEMP_SENSOR_PIN);
 
 // Pass our oneWire reference to Dallas Temperature sensor
-DallasTemperature temp_sensor(&oneWire);
-DeviceAddress thermometerAddr;
+DallasTemperature temp_sensors(&oneWire);
+DeviceAddress sensor_addresses[3];
 
 void printAddress(DeviceAddress);
 void request_temperature();
 
 Ticker temperature_ticker(request_temperature, 5000, 0, MILLIS);
 
-float LAST_RECORDED_TEMP = -127.0;
+float LAST_RECORDED_TEMPS[3] = {-127.0, -127.0, -127.0};
+float TEMP_OFFSETS[3] = {-0.31, -0.19, 0};
 bool TEMP_SENSOR_OFFLINE = true;
 
 void tick_temp_sensor()
@@ -30,20 +33,28 @@ void tick_temp_sensor()
 
 void init_temperature()
 {
-  temp_sensor.begin();
+  temp_sensors.begin();
   Serial.print("Found ");
-  Serial.print(temp_sensor.getDeviceCount(), DEC);
+  Serial.print(temp_sensors.getDeviceCount(), DEC);
   Serial.println(" devices.");
-  if (!temp_sensor.getAddress(thermometerAddr, 0))
+  for (uint8_t j = 0; j <= 2; ++j)
   {
-    Serial.println("Unable to find address for Device 0");
-    return;
+    if (!temp_sensors.getAddress(sensor_addresses[j], j))
+    {
+      Serial.println("Unable to find address for Device " + j);
+      return;
+    }
   }
-  Serial.print("Device 0 Address: ");
-  printAddress(thermometerAddr);
-  Serial.println();
+  for (uint8_t j = 0; j <= 2; ++j)
+  {
+    Serial.print("Device " + String(j) + " address: ");
+    printAddress(sensor_addresses[j]);
+    Serial.println();
+  }
+
   TEMP_SENSOR_OFFLINE = false;
-  temp_sensor.requestTemperatures();
+  temp_sensors.requestTemperatures();
+  temp_sensors.setResolution(12);
   temperature_ticker.start();
 }
 
@@ -51,10 +62,11 @@ void request_temperature()
 {
   if (TEMP_SENSOR_OFFLINE)
     return;
-  Serial.print("Requesting temperatures...");
-  temp_sensor.requestTemperatures();
-  Serial.println("DONE");
-  LAST_RECORDED_TEMP = temp_sensor.getTempC(thermometerAddr);
+  temp_sensors.requestTemperatures();
+  for (uint8_t j = 0; j <= 2; ++j)
+  {
+    LAST_RECORDED_TEMPS[j] = temp_sensors.getTempC(sensor_addresses[j]) + TEMP_OFFSETS[j];
+  }
 }
 
 // function to print a device address
@@ -63,15 +75,18 @@ void printAddress(DeviceAddress deviceAddress)
   for (uint8_t i = 0; i < 8; i++)
   {
     if (deviceAddress[i] < 16)
-      Serial.print("0x");
+      Serial.print("0");
     Serial.print(deviceAddress[i], HEX);
   }
 }
 
 DynamicJsonDocument get_temperature()
 {
-  DynamicJsonDocument doc(48);
-  doc["tem"] = String(LAST_RECORDED_TEMP);
+  DynamicJsonDocument doc(82);
+  for (uint8_t j = 0; j <= 2; ++j)
+  {
+    doc["tem" + String(j)] = String(LAST_RECORDED_TEMPS[j]);
+  }
   return doc;
 }
 

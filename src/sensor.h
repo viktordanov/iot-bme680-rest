@@ -7,6 +7,7 @@
 
 #include "Adafruit_BME680.h"
 #include "ArduinoJson.h"
+#include "temperature.h"
 
 #define BME_SCK 13
 #define BME_MISO 12
@@ -48,11 +49,11 @@ void init_sensor()
       delay(10);
   }
   // Set up oversampling and filter initialization
-  bme.setTemperatureOversampling(BME680_OS_8X);
-  bme.setHumidityOversampling(BME680_OS_2X);
-  bme.setPressureOversampling(BME680_OS_4X);
-  bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
-  bme.setGasHeater(320, 100); // 320*C for 100 ms (was 150)
+  bme.setTemperatureOversampling(BME680_OS_16X);
+  bme.setHumidityOversampling(BME680_OS_4X);
+  bme.setPressureOversampling(BME680_OS_NONE);
+  bme.setIIRFilterSize(BME680_FILTER_SIZE_15);
+  bme.setGasHeater(320, 150); // 320*C for 150 ms (was 150)
   get_gas_reference();
   DEBOUNCER = 15;
   sensor_debouncer.start();
@@ -86,7 +87,7 @@ DynamicJsonDocument get_measurement()
     return doc;
   }
 
-  delay(100); // This represents parallel work.
+  delay(150); // This represents parallel work.
   if (!bme.endReading())
   {
     doc["error"] = "Failed to complete reading";
@@ -95,6 +96,9 @@ DynamicJsonDocument get_measurement()
   }
 
   doc["tem"] = bme.temperature;
+
+  float temp_sensors_avg = (LAST_RECORDED_TEMPS[0] + LAST_RECORDED_TEMPS[1] + LAST_RECORDED_TEMPS[2]) / 3;
+  doc["tem_alt"] = temp_sensors_avg;
   doc["pre"] = bme.pressure / 100.0;
   doc["hum"] = bme.humidity;
   doc["gas"] = bme.gas_resistance / 1000.0;
@@ -136,7 +140,7 @@ DynamicJsonDocument get_measurement()
 
   // if (bme.readGas() < 120000)
   //   Serial.println("***** Poor air quality *****");
-  if ((getgasreference_count++) % 50 == 0)
+  if ((getgasreference_count++) % 500 == 0)
     get_gas_reference();
   // Serial.println(CalculateIAQ(air_quality_score));
   // Serial.println("------------------------------------------------");
@@ -169,7 +173,7 @@ void get_gas_reference()
   int readings = 10;
   for (int i = 1; i <= readings; i++)
   { // read gas for 10 x 0.100ms = 1sec
-      gas_reference += bme.readGas();
+    gas_reference += bme.readGas();
   }
   gas_reference = gas_reference / readings;
 }

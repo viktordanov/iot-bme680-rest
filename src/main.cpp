@@ -14,7 +14,7 @@ Ticker periodical_check(remeasure, 1000 * 60 * 10, 0, MILLIS);
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   init_temperature();
   init_leds();
   init_sensor();
